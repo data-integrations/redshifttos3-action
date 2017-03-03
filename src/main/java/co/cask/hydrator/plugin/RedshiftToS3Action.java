@@ -301,7 +301,7 @@ public class RedshiftToS3Action extends Action {
         }
       }
       if (!query.toLowerCase().startsWith("select") && !query.toLowerCase().contains("from")) {
-        throw new IllegalArgumentException("Please specify a valid select statement for query");
+        throw new IllegalArgumentException("Please specify a valid select statement for query.");
       }
     }
   }
