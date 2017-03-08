@@ -24,7 +24,6 @@ import org.junit.Test;
  * Unit tests for {@link co.cask.hydrator.plugin.RedshiftToS3Action.RedshiftToS3Config}
  */
 public class RedshiftToS3ConfigTest {
-
   @Test
   public void testIfBothKeysAndRoleIsNotPresent() throws Exception {
     RedshiftToS3Action.RedshiftToS3Config config =
@@ -44,7 +43,6 @@ public class RedshiftToS3ConfigTest {
     }
   }
 
-
   @Test
   public void testMissingCredentials() throws Exception {
     RedshiftToS3Action.RedshiftToS3Config config =
@@ -63,7 +61,6 @@ public class RedshiftToS3ConfigTest {
                             "'IAM Role' for connecting to S3 bucket.", e.getMessage());
     }
   }
-
 
   @Test
   public void testBothKeysAndRoleArePresent() throws Exception {

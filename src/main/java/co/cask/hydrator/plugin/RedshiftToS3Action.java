@@ -52,7 +52,6 @@ public class RedshiftToS3Action extends Action {
     this.config = config;
   }
 
-
   @Override
   public void configurePipeline(PipelineConfigurer pipelineConfigurer) throws IllegalArgumentException {
     super.configurePipeline(pipelineConfigurer);
@@ -61,6 +60,7 @@ public class RedshiftToS3Action extends Action {
 
   @Override
   public void run(ActionContext context) throws Exception {
+    config.validate();
     String dbURL = config.redshiftClusterURL;
     String masterUserName = config.redshiftMasterUser;
     String masterPassword = config.redshiftMasterPassword;
@@ -88,9 +88,11 @@ public class RedshiftToS3Action extends Action {
       }
       context.getArguments().set(config.outputPathToken, s3Path);
     } catch (ClassNotFoundException e) {
-      throw new IllegalArgumentException(e);
+      throw new IllegalArgumentException(String.format("Unable to load or register Redshift JDBC driver. %s",
+                                                       e.getMessage()), e);
     } catch (SQLException e) {
-      throw new IllegalArgumentException(e);
+      throw new IllegalArgumentException(String.format("Error unloading the data from Redshift to the S3 bucket. %s",
+                                                       e.getMessage()), e);
     } finally {
       if (stmt != null) {
         stmt.close();
@@ -176,9 +178,11 @@ public class RedshiftToS3Action extends Action {
       "and Secret Access keys)' and 'IAM Role' can not be provided or empty at the same time.(Macro-enabled)")
     private String iamRole;
 
+    @Macro
     @Description("A SELECT query, the results of which query are unloaded from Redshift table to the S3 bucket.")
     private String query;
 
+    @Macro
     @Description("The full path, including bucket name, to the location on Amazon S3 where Amazon Redshift will " +
       "write the output file objects, including the manifest file if MANIFEST is specified. Should be of the format: " +
       "s3://object-path/name-prefix.")
@@ -192,37 +196,42 @@ public class RedshiftToS3Action extends Action {
       " (Macro-enabled)")
     private String outputPathToken;
 
+    @Macro
     @Nullable
     @Description("Boolean value to determine if manifest file is to be created during unload. The manifest file " +
       "explicitly lists the data files that are created by the UNLOAD process. Default is false.")
     private Boolean manifest;
 
     @Nullable
+    @Macro
     @Description("Single ASCII character that is used to separate fields in the output file. Deafult is pipe(|).")
     private String delimiter;
 
+    @Macro
     @Nullable
     @Description("Boolean value to determine if UNLOAD writes data in parallel to multiple files, according to the " +
       "number of slices in the cluster. Default is true.")
     private Boolean parallel;
 
     @Nullable
+    @Macro
     @Description("Unloads data into one or more compressed files. Can be one of the following: NONE or BZIP2 or GZIP." +
       "Default is NONE.")
     private String compression;
 
+    @Macro
     @Nullable
     @Description("Boolean value to determine if UNLOAD will overwrite existing files, including the manifest file, " +
       "if the file is already available. Default is false.")
     private Boolean allowOverWrite;
 
-
+    @Macro
     @Nullable
     @Description("Boolean value to determine if UNLOAD places quotation marks around each unloaded data field, so " +
       "that Amazon Redshift can unload data values that contain the delimiter itself. Default is false.")
     private Boolean addQuotes;
 
-
+    @Macro
     @Nullable
     @Description("Boolean value to determine if escape character(\\) is to be placed before CHAR and VARCHAR columns " +
       "in delimited unload files, for every occurrence of the following characters: Linefeed \n, Carriage return \r," +
@@ -290,7 +299,6 @@ public class RedshiftToS3Action extends Action {
                                                "bucket.");
         }
       }
-
       if (Strings.isNullOrEmpty(iamRole)) {
         if (!((!Strings.isNullOrEmpty(accessKey) || this.containsMacro("accessKey")) &&
           (!Strings.isNullOrEmpty(secretAccessKey) || this.containsMacro("secretAccessKey")))) {
@@ -300,8 +308,10 @@ public class RedshiftToS3Action extends Action {
                                                "bucket.");
         }
       }
-      if (!query.toLowerCase().startsWith("select") && !query.toLowerCase().contains("from")) {
-        throw new IllegalArgumentException("Please specify a valid select statement for query.");
+      if (!Strings.isNullOrEmpty(query) && !this.containsMacro("query")) {
+        if (!query.toLowerCase().startsWith("select") && !query.toLowerCase().contains("from")) {
+          throw new IllegalArgumentException("Please specify a valid select statement for query.");
+        }
       }
     }
   }
