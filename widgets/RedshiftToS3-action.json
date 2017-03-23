@@ -1,0 +1,136 @@
+{
+  "metadata": {
+    "spec-version": "1.0"
+  },
+  "configuration-groups": [
+    {
+      "label": "DynamoDB Configuration",
+      "properties": [
+        {
+          "widget-type": "password",
+          "label": "Access Key",
+          "name": "accessKey"
+        },
+        {
+          "widget-type": "password",
+          "label": "Secret Access Key",
+          "name": "secretAccessKey"
+        },
+        {
+          "widget-type": "password",
+          "label": "AWS IAM Role",
+          "name": "iamRole"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Query",
+          "name": "query"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "S3 Data Path",
+          "name": "s3DataPath"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Output Path Token",
+          "name": "outputPathToken"
+        },
+        {
+          "widget-type": "select",
+          "label": "Manifest",
+          "name": "manifest",
+          "widget-attributes": {
+            "values": [
+              "true",
+              "false"
+            ],
+            "default": "false"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "S3 Delimiter",
+          "name": "delimiter"
+        },
+        {
+          "widget-type": "select",
+          "label": "Parallel",
+          "name": "parallel",
+          "widget-attributes": {
+            "values": [
+              "true",
+              "false"
+            ],
+            "default": "true"
+          }
+        },
+        {
+          "widget-type": "select",
+          "label": "Compression",
+          "name": "compression",
+          "widget-attributes": {
+            "values": [
+              "NONE",
+              "GZIP",
+              "BZIP2"
+            ],
+            "default": "NONE"
+          }
+        },
+        {
+          "widget-type": "select",
+          "label": "Allow Overwrite",
+          "name": "allowOverWrite",
+          "widget-attributes": {
+            "values": [
+              "true",
+              "false"
+            ],
+            "default": "false"
+          }
+        },
+        {
+          "widget-type": "select",
+          "label": "Add Quotes",
+          "name": "addQuotes",
+          "widget-attributes": {
+            "values": [
+              "true",
+              "false"
+            ],
+            "default": "false"
+          }
+        },
+        {
+          "widget-type": "select",
+          "label": "Escape",
+          "name": "escape",
+          "widget-attributes": {
+            "values": [
+              "true",
+              "false"
+            ],
+            "default": "false"
+          }
+        },
+        {
+          "widget-type": "textbox",
+          "label": "JDBC Redshift Cluster Database URL",
+          "name": "redshiftClusterURL"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Redshift Master User",
+          "name": "redshiftMasterUser"
+        },
+        {
+          "widget-type": "password",
+          "label": "Redshift Master Password",
+          "name": "redshiftMasterPassword"
+        }
+      ]
+    }
+  ],
+  "outputs": []
+}
