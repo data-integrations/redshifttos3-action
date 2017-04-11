@@ -21,7 +21,7 @@ Properties
 **Query:** A SELECT query, the results of which query are unloaded from Redshift table to the S3 bucket.
 
 **Redshift Cluster URL:** JDBC Redshift DB url for connecting to the redshift cluster. The url should include the port
-and db name. Should be if format: ``jdbc:redshift://<endpoint-address>:<endpoint-port>/<db-name>``. (Macro-enabled)
+and db name. Should be in the format: ``jdbc:redshift://<endpoint-address>:<endpoint-port>/<db-name>``. (Macro-enabled)
 
 **Redshift Master User:** Master user for the Redshift cluster to connect to. (Macro-enabled)
 
@@ -48,12 +48,12 @@ through macro substitution: ``${filePath}`` where ``filePath`` is the key specif
 **Manifest:** Boolean value to determine if manifest file is to be created during unload. The manifest file explicitly
 lists the data files that are created by the UNLOAD process. Default is false
 
-**Delimiter:** Single ASCII character that is used to separate fields in the output file. Deafult is pipe(|).
+**Delimiter:** Single ASCII character that is used to separate fields in the output file. Default is pipe(|).
 
 **Parallel:** Boolean value to determine if UNLOAD writes data in parallel to multiple files, according to the number
 of slices in the cluster. Default is true.
 
-**Compression:** Unloads data into one or more compressed files of type GZIPor BZIP2. Can be one of the following: NONE,
+**Compression:** Unloads data into one or more compressed files of type GZIP or BZIP2. Can be one of the following: NONE,
  BZIP2 or GZIP. Default is NONE.
 
 **Allow Overwrite:** Boolean value to determine if UNLOAD will overwrite existing files, including the manifest file, if
