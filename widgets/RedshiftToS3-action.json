@@ -4,8 +4,33 @@
   },
   "configuration-groups": [
     {
-      "label": "DynamoDB Configuration",
+      "label": "Basic",
       "properties": [
+        {
+          "widget-type": "textbox",
+          "label": "Query",
+          "name": "query"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "JDBC Redshift Cluster Database URL",
+          "name": "redshiftClusterURL"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "Redshift Master User",
+          "name": "redshiftMasterUser"
+        },
+        {
+          "widget-type": "password",
+          "label": "Redshift Master Password",
+          "name": "redshiftMasterPassword"
+        },
+        {
+          "widget-type": "textbox",
+          "label": "S3 Data Path",
+          "name": "s3DataPath"
+        },
         {
           "widget-type": "password",
           "label": "Access Key",
@@ -20,17 +45,12 @@
           "widget-type": "password",
           "label": "AWS IAM Role",
           "name": "iamRole"
-        },
-        {
-          "widget-type": "textbox",
-          "label": "Query",
-          "name": "query"
-        },
-        {
-          "widget-type": "textbox",
-          "label": "S3 Data Path",
-          "name": "s3DataPath"
-        },
+        }
+      ]
+    },
+    {
+      "label": "Advanced",
+      "properties": [
         {
           "widget-type": "textbox",
           "label": "Output Path Token",
@@ -113,21 +133,6 @@
             ],
             "default": "false"
           }
-        },
-        {
-          "widget-type": "textbox",
-          "label": "JDBC Redshift Cluster Database URL",
-          "name": "redshiftClusterURL"
-        },
-        {
-          "widget-type": "textbox",
-          "label": "Redshift Master User",
-          "name": "redshiftMasterUser"
-        },
-        {
-          "widget-type": "password",
-          "label": "Redshift Master Password",
-          "name": "redshiftMasterPassword"
         }
       ]
     }
