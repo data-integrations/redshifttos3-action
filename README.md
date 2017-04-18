@@ -1,5 +1,7 @@
-# Redshift To S3 Action
+<a href="https://cdap-users.herokuapp.com/"><img alt="Join CDAP community" src="https://cdap-users.herokuapp.com/badge.svg?t=redshifttos3-action"/></a> [![Build Status](https://travis-ci.org/hydrator/to-utf8-action.svg?branch=develop)](https://travis-ci.org/hydrator/redshifttos3-action) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) <img alt="CDAP Action" src="https://cdap-users.herokuapp.com/assets/cdap-action.svg"/> []() <img src="https://cdap-users.herokuapp.com/assets/cm-available.svg"/>
 
+RedshiftToS3 Action Plugin
+==========================
 
 Description
 -----------
@@ -42,3 +44,65 @@ Usage Notes
 1. The Redshift table from which user wants to unload the data should already exist in the database specified by the ``Redshift Cluster URL``.
 1. The Amazon S3 bucket where Amazon Redshift will write the output files **must reside** in the same region as your cluster.
 1. S3 data path should start with ``s3://`` and not with the ``s3n://`` or ``s3a://`` URI scheme.
+
+Prerequisites
+--------------
+CDAP version 4.1.x or higher.
+
+Building Plugins
+----------------
+You get started with RedshiftToS3 action plugin by building directly from the latest source code::
+
+   git clone git@github.com:hydrator/redshifttos3-action.git
+   cd redshifttos3-action
+   mvn clean package
+
+After the build completes, you will have a JAR for each plugin under each
+``<plugin-name>/target/`` directory.
+
+Deploying Plugins
+-----------------
+You can deploy a plugin using the CDAP CLI::
+
+  > load artifact <target/plugin-jar> config-file <resources/plugin-config>
+
+  > load artifact target/redshifttos3-action-plugin-<version>.jar \
+         config-file target/redshifttos3-action-plugin-<version>.json
+
+You can build without running tests: ``mvn clean install -DskipTests``
+
+Mailing Lists
+-------------
+CDAP User Group and Development Discussions:
+
+- `cdap-user@googlegroups.com <https://groups.google.com/d/forum/cdap-user>`__
+
+The *cdap-user* mailing list is primarily for users using the product to develop
+applications or building plugins for appplications. You can expect questions from
+users, release announcements, and any other discussions that we think will be helpful
+to the users.
+
+IRC Channel
+-----------
+CDAP IRC Channel: #cdap on irc.freenode.net
+
+
+License and Trademarks
+======================
+
+Copyright © 2017 Cask Data, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the
+License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+either express or implied. See the License for the specific language governing permissions
+and limitations under the License.
+
+Cask is a trademark of Cask Data, Inc. All rights reserved.
+
+Apache, Apache HBase, and HBase are trademarks of The Apache Software Foundation. Used with
+permission. No endorsement by The Apache Software Foundation is implied by the use of these marks.
