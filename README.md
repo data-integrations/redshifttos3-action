@@ -45,9 +45,6 @@ Usage Notes
 1. The Amazon S3 bucket where Amazon Redshift will write the output files **must reside** in the same region as your cluster.
 1. S3 data path should start with ``s3://`` and not with the ``s3n://`` or ``s3a://`` URI scheme.
 
-Getting Started
----------------
-
 Prerequisites
 --------------
 CDAP version 4.1.x or higher.
