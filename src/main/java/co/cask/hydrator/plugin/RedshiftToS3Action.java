@@ -43,6 +43,7 @@ import javax.annotation.Nullable;
   "(Amazon S3).")
 public class RedshiftToS3Action extends Action {
   public static final String PLUGIN_NAME = "RedshiftToS3";
+  private static final String JDBC_DRIVER_CLASS = "com.amazon.redshift.jdbc.Driver";
   private static final String COMPRESSION_BZIP2 = "BZIP2";
   private static final String COMPRESSION_GZIP = "GZIP";
   private static final String COMPRESSION_NONE = "NONE";
@@ -61,18 +62,15 @@ public class RedshiftToS3Action extends Action {
   @Override
   public void run(ActionContext context) throws Exception {
     config.validate();
-    String dbURL = config.redshiftClusterURL;
-    String masterUserName = config.redshiftMasterUser;
-    String masterPassword = config.redshiftMasterPassword;
     Connection conn = null;
     Statement stmt = null;
     try {
       //Open a connection to redshift
-      Class.forName("com.amazon.redshift.jdbc4.Driver");
+      Class.forName(JDBC_DRIVER_CLASS);
       Properties props = new Properties();
-      props.setProperty("user", masterUserName);
-      props.setProperty("password", masterPassword);
-      conn = DriverManager.getConnection(dbURL, props);
+      props.setProperty("user", config.redshiftMasterUser);
+      props.setProperty("password", config.redshiftMasterPassword);
+      conn = DriverManager.getConnection(config.redshiftClusterURL, props);
       stmt = conn.createStatement();
       String unloadCommand = buildUnloadCommand();
       stmt.executeUpdate(unloadCommand);
