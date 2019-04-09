@@ -14,14 +14,15 @@
  * the License.
  */
 
-package co.cask.hydrator.plugin;
+package io.cdap.plugin;
 
-import co.cask.cdap.etl.mock.common.MockPipelineConfigurer;
+import io.cdap.cdap.etl.mock.common.MockPipelineConfigurer;
 import org.junit.Assert;
 import org.junit.Test;
 
+
 /**
- * Unit tests for {@link co.cask.hydrator.plugin.RedshiftToS3Action.RedshiftToS3Config}
+ * Unit tests for {@link io.cdap.plugin.RedshiftToS3Action.RedshiftToS3Config}
  */
 public class RedshiftToS3ConfigTest {
   @Test
