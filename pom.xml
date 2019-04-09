@@ -15,10 +15,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <name>RedshiftToS3 Action Plugin</name>
-  <groupId>co.cask.hydrator</groupId>
+  <groupId>io.cdap.plugin</groupId>
   <artifactId>redshifttos3-action-plugin</artifactId>
   <modelVersion>4.0.0</modelVersion>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
 
   <licenses>
     <license>
@@ -31,9 +31,9 @@
 
   <developers>
     <developer>
-      <name>Cask Data</name>
-      <email>cask-dev@googlegroups.com</email>
-      <organization>Cask Data, Inc.</organization>
+      <name>CDAP</name>
+      <email>cdap-dev@googlegroups.com</email>
+      <organization>CDAP</organization>
       <organizationUrl>http://www.cdap.io</organizationUrl>
     </developer>
   </developers>
@@ -55,18 +55,18 @@
       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </snapshotRepository>
     <site>
-      <id>cask</id>
-      <url>http://cask.co</url>
+      <id>cdap</id>
+      <url>http://cdap.io</url>
     </site>
   </distributionManagement>
 
   <issueManagement>
-    <url>https://issues.cask.co/browse/HYDRATOR</url>
+    <url>https://issues.cask.co/browse/CDAP</url>
   </issueManagement>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <cdap.version>4.1.0</cdap.version>
+    <cdap.version>6.0.0-SNAPSHOT</cdap.version>
     <commons-lang.version>2.6</commons-lang.version>
     <guava.version>19.0</guava.version>
     <redshift-jdbc.version>1.2.1.1001</redshift-jdbc.version>
@@ -75,7 +75,7 @@
     <widgets.dir>widgets</widgets.dir>
     <docs.dir>docs</docs.dir>
     <app.parents>
-      system:cdap-data-pipeline[4.0.0,10.0.0-SNAPSHOT),system:cdap-data-streams[4.0.0,10.0.0-SNAPSHOT)
+      system:cdap-data-pipeline[6.0.0-SNAPSHOT,7.0.0-SNAPSHOT),system:cdap-data-streams[6.0.0-SNAPSHOT,7.0.0-SNAPSHOT)
     </app.parents>
     <!-- this is here because project.basedir evaluates to null in the script build step -->
     <main.basedir>${project.basedir}</main.basedir>
@@ -103,19 +103,19 @@
       <version>${redshift-jdbc.version}</version>
     </dependency>
     <dependency>
-      <groupId>co.cask.cdap</groupId>
+      <groupId>io.cdap.cdap</groupId>
       <artifactId>cdap-api</artifactId>
       <version>${cdap.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>co.cask.cdap</groupId>
+      <groupId>io.cdap.cdap</groupId>
       <artifactId>cdap-etl-api</artifactId>
       <version>${cdap.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>co.cask.cdap</groupId>
+      <groupId>io.cdap.cdap</groupId>
       <artifactId>hydrator-test</artifactId>
       <version>${cdap.version}</version>
       <scope>test</scope>
@@ -359,7 +359,7 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <_exportcontents>co.cask.hydrator.plugin.*</_exportcontents>
+            <_exportcontents>io.cdap.plugin.*</_exportcontents>
             <Embed-Dependency>*;inline=false;scope=compile</Embed-Dependency>
             <Embed-Transitive>true</Embed-Transitive>
             <Embed-Directory>lib</Embed-Directory>
