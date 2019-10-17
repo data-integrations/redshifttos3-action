@@ -16,6 +16,8 @@
 
 package io.cdap.plugin;
 
+import io.cdap.cdap.etl.api.FailureCollector;
+import io.cdap.cdap.etl.api.validation.CauseAttributes;
 import io.cdap.cdap.etl.mock.common.MockPipelineConfigurer;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,8 +27,13 @@ import org.junit.Test;
  * Unit tests for {@link io.cdap.plugin.RedshiftToS3Action.RedshiftToS3Config}
  */
 public class RedshiftToS3ConfigTest {
+  private static final String IAM_ROLE = "iamRole";
+  private static final String ACCESS_KEY = "accessKey";
+  private static final String SECRET_ACCESS_KEY = "secretAccessKey";
+  private static final String QUERY = "query";
+
   @Test
-  public void testIfBothKeysAndRoleIsNotPresent() throws Exception {
+  public void testIfBothKeysAndRoleIsNotPresent() {
     RedshiftToS3Action.RedshiftToS3Config config =
       new RedshiftToS3Action.RedshiftToS3Config(null, null, null, "select * from testTable",
                                                 "s3://mybucket/test/redshift_", null, null, null, null, null, null,
@@ -34,18 +41,19 @@ public class RedshiftToS3ConfigTest {
                                                 "jdbc:redshift://x.y.us-west-1.redshift.amazonaws.com:5439/dev",
                                                 "masterUser", "masterPassword");
     MockPipelineConfigurer configurer = new MockPipelineConfigurer(null);
-    try {
-      new RedshiftToS3Action(config).configurePipeline(configurer);
-      Assert.fail();
-    } catch (IllegalArgumentException e) {
-      Assert.assertEquals("Both configurations 'Keys'(Access and Secret Access keys) and 'IAM Role' can not be " +
-                            "empty at the same time. Either provide the 'Keys'(Access and Secret Access keys) or " +
-                            "'IAM Role' for connecting to S3 bucket.", e.getMessage());
-    }
+    FailureCollector collector = configurer.getStageConfigurer().getFailureCollector();
+    new RedshiftToS3Action(config).configurePipeline(configurer);
+    Assert.assertEquals(1, collector.getValidationFailures().size());
+    Assert.assertEquals(IAM_ROLE, collector.getValidationFailures().get(0).getCauses().get(0)
+      .getAttribute(CauseAttributes.STAGE_CONFIG));
+    Assert.assertEquals(ACCESS_KEY, collector.getValidationFailures().get(0).getCauses().get(1)
+      .getAttribute(CauseAttributes.STAGE_CONFIG));
+    Assert.assertEquals(SECRET_ACCESS_KEY, collector.getValidationFailures().get(0).getCauses().get(2)
+      .getAttribute(CauseAttributes.STAGE_CONFIG));
   }
 
   @Test
-  public void testMissingCredentials() throws Exception {
+  public void testMissingCredentials() {
     RedshiftToS3Action.RedshiftToS3Config config =
       new RedshiftToS3Action.RedshiftToS3Config(null, "secretAccessKey", null, "select * from testTable",
                                                 "s3://mybucket/test/redshift_", null, null, null,
@@ -53,18 +61,19 @@ public class RedshiftToS3ConfigTest {
                                                 "jdbc:redshift://x.y.us-west-1.redshift.amazonaws.com:5439/dev",
                                                 "masterUser", "masterPassword");
     MockPipelineConfigurer configurer = new MockPipelineConfigurer(null);
-    try {
-      new RedshiftToS3Action(config).configurePipeline(configurer);
-      Assert.fail();
-    } catch (IllegalArgumentException e) {
-      Assert.assertEquals("Both configurations 'Keys'(Access and Secret Access keys) and 'IAM Role' can not be " +
-                            "empty at the same time. Either provide the 'Keys'(Access and Secret Access keys) or " +
-                            "'IAM Role' for connecting to S3 bucket.", e.getMessage());
-    }
+    FailureCollector collector = configurer.getStageConfigurer().getFailureCollector();
+    new RedshiftToS3Action(config).configurePipeline(configurer);
+    Assert.assertEquals(1, collector.getValidationFailures().size());
+    Assert.assertEquals(IAM_ROLE, collector.getValidationFailures().get(0).getCauses().get(0)
+      .getAttribute(CauseAttributes.STAGE_CONFIG));
+    Assert.assertEquals(ACCESS_KEY, collector.getValidationFailures().get(0).getCauses().get(1)
+      .getAttribute(CauseAttributes.STAGE_CONFIG));
+    Assert.assertEquals(SECRET_ACCESS_KEY, collector.getValidationFailures().get(0).getCauses().get(2)
+      .getAttribute(CauseAttributes.STAGE_CONFIG));
   }
 
   @Test
-  public void testBothKeysAndRoleArePresent() throws Exception {
+  public void testBothKeysAndRoleArePresent() {
     RedshiftToS3Action.RedshiftToS3Config config =
       new RedshiftToS3Action.RedshiftToS3Config("accessKey", "secretAccessKey", "arn:aws:iam::123456789120:role/MyRole",
                                                 "select * from testTable", "s3://mybucket/test/redshift_", null, null,
@@ -72,18 +81,19 @@ public class RedshiftToS3ConfigTest {
                                                 "jdbc:redshift://x.y.us-west-1.redshift.amazonaws.com:5439/dev",
                                                 "masterUser", "masterPassword");
     MockPipelineConfigurer configurer = new MockPipelineConfigurer(null);
-    try {
-      new RedshiftToS3Action(config).configurePipeline(configurer);
-      Assert.fail();
-    } catch (IllegalArgumentException e) {
-      Assert.assertEquals("Both configurations 'Keys'(Access and Secret Access keys) and 'IAM Role' can not be " +
-                            "provided at the same time. Either provide the 'Keys'(Access and Secret Access keys) or " +
-                            "'IAM Role' for connecting to S3 bucket.", e.getMessage());
-    }
+    FailureCollector collector = configurer.getStageConfigurer().getFailureCollector();
+    new RedshiftToS3Action(config).configurePipeline(configurer);
+    Assert.assertEquals(1, collector.getValidationFailures().size());
+    Assert.assertEquals(IAM_ROLE, collector.getValidationFailures().get(0).getCauses().get(0)
+      .getAttribute(CauseAttributes.STAGE_CONFIG));
+    Assert.assertEquals(ACCESS_KEY, collector.getValidationFailures().get(0).getCauses().get(1)
+      .getAttribute(CauseAttributes.STAGE_CONFIG));
+    Assert.assertEquals(SECRET_ACCESS_KEY, collector.getValidationFailures().get(0).getCauses().get(2)
+      .getAttribute(CauseAttributes.STAGE_CONFIG));
   }
 
   @Test
-  public void testKeysAndRoleArePresentUsingMacros() throws Exception {
+  public void testKeysAndRoleArePresentUsingMacros() {
     RedshiftToS3Action.RedshiftToS3Config config =
       new RedshiftToS3Action.RedshiftToS3Config("accessKey", "secretAccessKey", "${iamRole}",
                                                 "select * from testTable", "s3://mybucket/test/redshift_", null, null,
@@ -91,18 +101,19 @@ public class RedshiftToS3ConfigTest {
                                                 "jdbc:redshift://x.y.us-west-1.redshift.amazonaws.com:5439/dev",
                                                 "masterUser", "masterPassword");
     MockPipelineConfigurer configurer = new MockPipelineConfigurer(null);
-    try {
-      new RedshiftToS3Action(config).configurePipeline(configurer);
-      Assert.fail();
-    } catch (IllegalArgumentException e) {
-      Assert.assertEquals("Both configurations 'Keys'(Access and Secret Access keys) and 'IAM Role' can not be " +
-                            "provided at the same time. Either provide the 'Keys'(Access and Secret Access keys) or " +
-                            "'IAM Role' for connecting to S3 bucket.", e.getMessage());
-    }
+    FailureCollector collector = configurer.getStageConfigurer().getFailureCollector();
+    new RedshiftToS3Action(config).configurePipeline(configurer);
+    Assert.assertEquals(1, collector.getValidationFailures().size());
+    Assert.assertEquals(IAM_ROLE, collector.getValidationFailures().get(0).getCauses().get(0)
+      .getAttribute(CauseAttributes.STAGE_CONFIG));
+    Assert.assertEquals(ACCESS_KEY, collector.getValidationFailures().get(0).getCauses().get(1)
+      .getAttribute(CauseAttributes.STAGE_CONFIG));
+    Assert.assertEquals(SECRET_ACCESS_KEY, collector.getValidationFailures().get(0).getCauses().get(2)
+      .getAttribute(CauseAttributes.STAGE_CONFIG));
   }
 
   @Test
-  public void testInvalidQuery() throws Exception {
+  public void testInvalidQuery() {
     RedshiftToS3Action.RedshiftToS3Config config =
       new RedshiftToS3Action.RedshiftToS3Config("accessKey", "secretAccessKey", "",
                                                 "drop table testTable", "s3://mybucket/test/redshift_", null, null,
@@ -110,11 +121,10 @@ public class RedshiftToS3ConfigTest {
                                                 "jdbc:redshift://x.y.us-west-1.redshift.amazonaws.com:5439/dev",
                                                 "masterUser", "masterPassword");
     MockPipelineConfigurer configurer = new MockPipelineConfigurer(null);
-    try {
-      new RedshiftToS3Action(config).configurePipeline(configurer);
-      Assert.fail();
-    } catch (IllegalArgumentException e) {
-      Assert.assertEquals("Please specify a valid select statement for query.", e.getMessage());
-    }
+    FailureCollector collector = configurer.getStageConfigurer().getFailureCollector();
+    new RedshiftToS3Action(config).configurePipeline(configurer);
+    Assert.assertEquals(1, collector.getValidationFailures().size());
+    Assert.assertEquals(QUERY, collector.getValidationFailures().get(0).getCauses().get(0)
+      .getAttribute(CauseAttributes.STAGE_CONFIG));
   }
 }
