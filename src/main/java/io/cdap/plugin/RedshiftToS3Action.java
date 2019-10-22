@@ -22,6 +22,7 @@ import io.cdap.cdap.api.annotation.Macro;
 import io.cdap.cdap.api.annotation.Name;
 import io.cdap.cdap.api.annotation.Plugin;
 import io.cdap.cdap.api.plugin.PluginConfig;
+import io.cdap.cdap.etl.api.FailureCollector;
 import io.cdap.cdap.etl.api.PipelineConfigurer;
 import io.cdap.cdap.etl.api.action.Action;
 import io.cdap.cdap.etl.api.action.ActionContext;
@@ -55,12 +56,15 @@ public class RedshiftToS3Action extends Action {
   @Override
   public void configurePipeline(PipelineConfigurer pipelineConfigurer) throws IllegalArgumentException {
     super.configurePipeline(pipelineConfigurer);
-    config.validate();
+    config.validate(pipelineConfigurer.getStageConfigurer().getFailureCollector());
   }
 
   @Override
   public void run(ActionContext context) throws Exception {
-    config.validate();
+    FailureCollector collector = context.getFailureCollector();
+    config.validate(collector);
+    collector.getOrThrowException();
+
     Connection conn = null;
     Statement stmt = null;
     try {
@@ -157,6 +161,11 @@ public class RedshiftToS3Action extends Action {
    * Config class that contains all properties required for running the unload command.
    */
   public static class RedshiftToS3Config extends PluginConfig {
+    private static final String IAM_ROLE = "iamRole";
+    private static final String ACCESS_KEY = "accessKey";
+    private static final String SECRET_ACCESS_KEY = "secretAccessKey";
+    private static final String QUERY = "query";
+
     @Macro
     @Nullable
     @Description("The access Id provided by AWS to access the S3 bucket. Both configurations 'Keys(Access and Secret " +
@@ -286,28 +295,29 @@ public class RedshiftToS3Action extends Action {
     /**
      * Validates the config parameters required for unloading the data.
      */
-    private void validate() {
-      if (!Strings.isNullOrEmpty(iamRole) || this.containsMacro("iamRole")) {
-        if (!((Strings.isNullOrEmpty(accessKey) && !this.containsMacro("accessKey")) &&
-          (Strings.isNullOrEmpty(secretAccessKey) && !this.containsMacro("secretAccessKey")))) {
-          throw new IllegalArgumentException("Both configurations 'Keys'(Access and Secret Access keys) and 'IAM " +
-                                               "Role' can not be provided at the same time. Either provide the 'Keys'" +
-                                               "(Access and Secret Access keys) or 'IAM Role' for connecting to S3 " +
-                                               "bucket.");
+    private void validate(FailureCollector collector) {
+      if (!Strings.isNullOrEmpty(iamRole) || this.containsMacro(IAM_ROLE)) {
+        if (!((Strings.isNullOrEmpty(accessKey) && !this.containsMacro(ACCESS_KEY)) &&
+          (Strings.isNullOrEmpty(secretAccessKey) && !this.containsMacro(SECRET_ACCESS_KEY)))) {
+          collector.addFailure(
+            "Both configurations 'Keys'(Access and Secret Access keys) and 'IAM " +
+              "Role' can not be provided at the same time.",
+            "Either provide the 'Keys' (Access and Secret Access keys) or 'IAM Role' for connecting to S3 bucket.")
+            .withConfigProperty(IAM_ROLE).withConfigProperty(ACCESS_KEY).withConfigProperty(SECRET_ACCESS_KEY);
+        }
+      } else if (Strings.isNullOrEmpty(iamRole)) {
+        if (!((!Strings.isNullOrEmpty(accessKey) || this.containsMacro(ACCESS_KEY)) &&
+          (!Strings.isNullOrEmpty(secretAccessKey) || this.containsMacro(SECRET_ACCESS_KEY)))) {
+          collector.addFailure(
+            "Both configurations 'Keys'(Access and Secret Access keys) and " +
+              "'IAM Role' can not be empty at the same time.",
+            "Either provide the 'Keys'(Access and Secret Access keys) or 'IAM Role' for connecting to S3 bucket.")
+            .withConfigProperty(IAM_ROLE).withConfigProperty(ACCESS_KEY).withConfigProperty(SECRET_ACCESS_KEY);
         }
       }
-      if (Strings.isNullOrEmpty(iamRole)) {
-        if (!((!Strings.isNullOrEmpty(accessKey) || this.containsMacro("accessKey")) &&
-          (!Strings.isNullOrEmpty(secretAccessKey) || this.containsMacro("secretAccessKey")))) {
-          throw new IllegalArgumentException("Both configurations 'Keys'(Access and Secret Access keys) and 'IAM " +
-                                               "Role' can not be empty at the same time. Either provide the 'Keys'" +
-                                               "(Access and Secret Access keys) or 'IAM Role' for connecting to S3 " +
-                                               "bucket.");
-        }
-      }
-      if (!Strings.isNullOrEmpty(query) && !this.containsMacro("query")) {
+      if (!Strings.isNullOrEmpty(query) && !this.containsMacro(QUERY)) {
         if (!query.toLowerCase().startsWith("select") && !query.toLowerCase().contains("from")) {
-          throw new IllegalArgumentException("Please specify a valid select statement for query.");
+          collector.addFailure("specify a valid select statement for query.", null).withConfigProperty(QUERY);
         }
       }
     }
